@@ -14,9 +14,9 @@ public:
 
     void SetUp();
     void TearDown();
-
-private:
+    void TestBody();
     EpollSelector epollSelector;
+    int serv_sock;
 };
 
 

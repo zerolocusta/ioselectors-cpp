@@ -1,5 +1,6 @@
 #include "EpollSelector.h"
 #include <strings.h>
+#include <unistd.h>
 namespace selector
 {
 
@@ -64,6 +65,7 @@ EpollSelector::EpollSelector()
 
 EpollSelector::~EpollSelector()
 {
+    close(epoll_fd_);
 }
 
 int EpollSelector::eventMaskToEpollMask(int event_mask)

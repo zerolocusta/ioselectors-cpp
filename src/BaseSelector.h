@@ -16,7 +16,7 @@ class BaseSelector;
 namespace selector
 {
 
-typedef std::function<void()> callback_func_t;
+typedef std::function<void(int)> callback_func_t;
 typedef std::map<int, callback_func_t> CallbackMap_t;
 
 enum
