@@ -20,14 +20,14 @@ public:
   DefaultSelector();
   ~DefaultSelector();
 
-  void add_event(int fd, int mask, const callback_func_t &callback) override;
-  void remove_event(int fd) override;
-  void modify_event(int fd, int event_mask) override;
-  void modify_event(int fd, int event_mask, const callback_func_t &callback) override;
+  void addEvent(int fd, int mask, const callback_func_t &callback) override;
+  void removeEvent(int fd) override;
+  void modifyEvent(int fd, int event_mask) override;
+  void modifyEvent(int fd, int event_mask, const callback_func_t &callback) override;
   void loop(int timeoutMs) override;
 
 private:
-  void update_event(int fd, int mask, const callback_func_t &callback);
+  void updateEvent(int fd, int mask, const callback_func_t &callback);
 
 private:
   int epoll_fd_;

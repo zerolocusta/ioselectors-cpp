@@ -16,73 +16,15 @@
 namespace selector
 {
 
-class EBADFexception : public std::exception
+class EpollExecption : public std::exception
 {
-  const char *what() const throw()
-  {
-    return "[EBADF] epoll_fd or fd is not a valid file descriptor";
-  }
-};
+public:
+  EpollExecption(int epoll_errno);
+  const char *what() const throw();
+  const int getErrno() const;
 
-class EEXITexception : public std::exception
-{
-  const char *what() const throw()
-  {
-    return "[EEXIT] op  was  EPOLL_CTL_ADD,"
-           "and the supplied file descriptor fd "
-           "is already registered with this epoll instance.";
-  }
-};
-
-class EINVALexception : public std::exception
-{
-  const char *what() const throw()
-  {
-    return "[EINVAL] epfd is not an epoll file descriptor, "
-           "or fd is the same  as epfd, "
-           "or  the  requested  operation op is not supported by "
-           "this interface.";
-  }
-};
-
-class ENOENTexception : public std::exception
-{
-  const char *what() const throw()
-  {
-    return "[ENOENT]op was EPOLL_CTL_MOD or EPOLL_CTL_DEL,"
-           " and fd is not registered with this epoll instance.";
-  }
-};
-
-class ENOMEMexception : public std::exception
-{
-  const char *what() const throw()
-  {
-    return "[ENOMEM] There  was  insufficient  memory to "
-           "handle the requested op"
-           "control operation.";
-  }
-};
-
-class ENOSPCexception : public std::exception
-{
-  const char *what() const throw()
-  {
-    return "[ENOSPC]The limit  imposed  by  /proc/sys/fs/epoll/max_user_watches"
-           "was  encountered while trying to register (EPOLL_CTL_ADD) a"
-           "new file descriptor on an epoll instance.  See epoll(7) for"
-           "further details.";
-  }
-};
-
-class EPERMexception : public std::exception
-{
-  const char *what() const throw()
-  {
-    return "[EPERM] The  target file fd does not support epoll.  This error can "
-           "occur if fd refers to, for example, a  regular  file  or  a"
-           "directory.";
-  }
+private:
+  int epoll_errno_;
 };
 
 class EpollSelector : public BaseSelector
@@ -93,14 +35,15 @@ public:
   EpollSelector();
   ~EpollSelector();
 
-  void add_event(int fd, int mask, const callback_func_t &callback) override;
-  void remove_event(int fd) override;
-  void modify_event(int fd, int event_mask) override;
-  void modify_event(int fd, int event_mask, const callback_func_t &callback) override;
+  void addEvent(int fd, int mask, const callback_func_t &callback) override;
+  void removeEvent(int fd) override;
+  void modifyEvent(int fd, int event_mask) override;
+  void modifyEvent(int fd, int event_mask, const callback_func_t &callback) override;
   void loop(int timeoutMs) override;
 
 private:
-  void update_event(int fd, int mask, const callback_func_t &callback);
+  int eventMaskToEpollMask(int event_mask);
+  void updateEvent(int fd, int operation, int event_mask);
 
 private:
   static const int InitEventListSize = 16;

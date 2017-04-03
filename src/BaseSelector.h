@@ -21,7 +21,7 @@ typedef std::map<int, callback_func_t> CallbackMap_t;
 
 enum
 {
-  EVENT_READ  = 1 << 0,
+  EVENT_READ = 1 << 0,
   EVENT_WRITE = 1 << 1
 };
 
@@ -32,10 +32,10 @@ public:
   virtual ~BaseSelector() = default;
 
 public:
-  virtual void add_event(int fd, int mask, const callback_func_t &callback) = 0;
-  virtual void remove_event(int fd) = 0;
-  virtual void modify_event(int fd, int event_mask) = 0;
-  virtual void modify_event(int fd, int event_mask, const callback_func_t &callback) = 0;
+  virtual void addEvent(int fd, int mask, const callback_func_t &callback) = 0;
+  virtual void removeEvent(int fd) = 0;
+  virtual void modifyEvent(int fd, int event_mask) = 0;
+  virtual void modifyEvent(int fd, int event_mask, const callback_func_t &callback) = 0;
   virtual void loop(int timeoutMs) = 0;
 };
 }
