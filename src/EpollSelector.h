@@ -16,10 +16,10 @@
 namespace selector
 {
 
-class EpollExecption : public std::exception
+class EpollException : public std::exception
 {
 public:
-  EpollExecption(int epoll_errno);
+  EpollException(int epoll_errno);
   const char *what() const throw();
   const int getErrno() const;
 

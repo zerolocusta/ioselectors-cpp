@@ -8,7 +8,7 @@ using namespace selector;
 
 class EpollSelectorUnitTest : public testing::Test
 {
-public:
+  public:
     EpollSelectorUnitTest();
     ~EpollSelectorUnitTest();
 
@@ -18,6 +18,5 @@ public:
     EpollSelector epollSelector;
     int serv_sock;
 };
-
 
 #endif // SELECTOR_SRC_TEST_TESTEPOLLSELECTOR_H

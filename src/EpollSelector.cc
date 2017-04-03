@@ -4,12 +4,12 @@
 namespace selector
 {
 
-EpollExecption::EpollExecption(int epoll_errno)
+EpollException::EpollException(int epoll_errno)
     : epoll_errno_(epoll_errno)
 {
 }
 
-const char *EpollExecption::what() const throw()
+const char *EpollException::what() const throw()
 {
     switch (epoll_errno_)
     {
@@ -52,7 +52,7 @@ const char *EpollExecption::what() const throw()
     }
 }
 
-const int EpollExecption::getErrno() const
+const int EpollException::getErrno() const
 {
     return epoll_errno_;
 }
@@ -92,7 +92,7 @@ void EpollSelector::updateEvent(int fd, int operation, int event_mask)
         ret = epoll_ctl(epoll_fd_, operation, fd, &epoll_ev);
     }
     if (ret < 0)
-        throw EpollExecption(errno);
+        throw EpollException(errno);
 }
 
 void EpollSelector::addEvent(int fd, int event_mask, const callback_func_t &callback)
@@ -107,7 +107,6 @@ void EpollSelector::removeEvent(int fd)
     if (it != callbacks_.end())
         callbacks_.erase(it);
     updateEvent(fd, EPOLL_CTL_DEL, 0);
-
 }
 
 void EpollSelector::modifyEvent(int fd, int event_mask, const callback_func_t &callback)
