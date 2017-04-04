@@ -31,6 +31,7 @@ void EpollSelectorUnitTest::SetUp()
 
 void EpollSelectorUnitTest::TearDown()
 {
+    close(serv_sock);
 }
 
 void EpollSelectorUnitTest::TestBody()
@@ -40,15 +41,7 @@ void EpollSelectorUnitTest::TestBody()
 TEST_F(EpollSelectorUnitTest, TEST_ADD_EVENT)
 {
     epollSelector.addEvent(serv_sock, selector::EVENT_READ, [](int a) { return; });
-    epollSelector.removeEvent(serv_sock);
-    try
-    {
-        epollSelector.removeEvent(serv_sock);
-    }
-    catch (selector::EpollException &err)
-    {
-        EXPECT_EQ(ENOENT, err.getErrno());
-    }
+    epollSelector.loop(1000);
 }
 
 TEST_F(EpollSelectorUnitTest, TEST_ADD_SAME_FD_EVENT_TWICE)

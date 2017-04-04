@@ -1,6 +1,7 @@
 #include "EpollSelector.h"
 #include <strings.h>
 #include <unistd.h>
+#include <iostream>
 namespace selector
 {
 
@@ -150,19 +151,21 @@ void EpollSelector::loop(int timeoutMs)
         if (static_cast<EventList_t::size_type>(numReady) == events_.size())
             extendEventListSize();
 
-        std::vector<std::pair<int, callback_func_t>> tempMasktAndCallbackList(numReady);
+        std::vector<std::pair<callback_func_t, int>> tempMasktAndCallbackList(numReady);
         // can not directly call callback function, because those function may modify callbacks_
-        for (auto event : events_)
+        for (size_t i = 0; i < numReady; i++)
         {
+            auto event = events_[i];
             int mask = epollMaskToEventMask(event.events);
-            auto callback = callbacks_[event.data.fd];
-            tempMasktAndCallbackList.push_back(std::make_pair(mask, callback));
+            auto it = callbacks_.find(event.data.fd);
+            callback_func_t callback = it->second;
+            tempMasktAndCallbackList[i] = std::make_pair(callback, mask);
+            ;
         }
-        for (auto mf : tempMasktAndCallbackList)
+        for (size_t i = 0; i < numReady; i++)
         {
-            int mask = mf.first;
-            callback_func_t callback = mf.second;
-            callback(mask);
+            auto callback_and_mask = tempMasktAndCallbackList[i];
+            callback_and_mask.first(callback_and_mask.second);
         }
     }
 }
