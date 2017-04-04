@@ -68,9 +68,20 @@ EpollSelector::~EpollSelector()
     close(epoll_fd_);
 }
 
-int EpollSelector::eventMaskToEpollMask(int event_mask)
+int EpollSelector::epollMaskToEventMask(int epoll_mask)
 {
     int mask = 0;
+    if (epoll_mask & EPOLLIN)
+        mask |= EVENT_READ;
+    if (epoll_mask & EPOLLOUT)
+        mask |= EVENT_WRITE;
+    return mask;
+}
+
+int EpollSelector::eventMaskToEpollMask(int event_mask)
+{
+    // we use edge-trigger
+    int mask = EPOLLET;
     if (event_mask & EVENT_READ)
         mask |= EPOLLIN;
     if (event_mask & EVENT_WRITE)
@@ -89,6 +100,7 @@ void EpollSelector::updateEvent(int fd, int operation, int event_mask)
         bzero(&epoll_ev, sizeof(epoll_ev));
         int epoll_mask = eventMaskToEpollMask(event_mask);
         epoll_ev.events = epoll_mask;
+        epoll_ev.data.fd = fd;
         ret = epoll_ctl(epoll_fd_, operation, fd, &epoll_ev);
     }
     if (ret < 0)
@@ -120,7 +132,38 @@ void EpollSelector::modifyEvent(int fd, int event_mask)
     updateEvent(fd, EPOLL_CTL_MOD, event_mask);
 }
 
+void EpollSelector::extendEventListSize()
+{
+    events_.resize(events_.size() * 2);
+}
+
 void EpollSelector::loop(int timeoutMs)
 {
+    int numReady = epoll_wait(epoll_fd_,
+                              &events_.front(),
+                              static_cast<int>(events_.size()),
+                              timeoutMs);
+    if (numReady < 0 && errno != EINTR)
+        throw EpollException(errno);
+    else if (numReady > 0)
+    {
+        if (static_cast<EventList_t::size_type>(numReady) == events_.size())
+            extendEventListSize();
+
+        std::vector<std::pair<int, callback_func_t>> tempMasktAndCallbackList(numReady);
+        // can not directly call callback function, because those function may modify callbacks_
+        for (auto event : events_)
+        {
+            int mask = epollMaskToEventMask(event.events);
+            auto callback = callbacks_[event.data.fd];
+            tempMasktAndCallbackList.push_back(std::make_pair(mask, callback));
+        }
+        for (auto mf : tempMasktAndCallbackList)
+        {
+            int mask = mf.first;
+            callback_func_t callback = mf.second;
+            callback(mask);
+        }
+    }
 }
 }

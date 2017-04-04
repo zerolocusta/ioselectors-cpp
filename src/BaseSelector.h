@@ -3,7 +3,7 @@
 
 #include <errno.h>
 
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include <functional>
 #include "boost/core/noncopyable.hpp"
@@ -16,14 +16,14 @@ class BaseSelector;
 namespace selector
 {
 
-typedef std::function<void(int)> callback_func_t;
-typedef std::map<int, callback_func_t> CallbackMap_t;
-
 enum
 {
   EVENT_READ = 1 << 0,
   EVENT_WRITE = 1 << 1
 };
+
+typedef std::function<void(int)> callback_func_t;
+typedef std::unordered_map<int, callback_func_t> CallbackMap_t;
 
 class BaseSelector : private boost::noncopyable
 {

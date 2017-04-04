@@ -5,6 +5,7 @@
 #include <endian.h>
 #include <strings.h>
 #include <netinet/in.h>
+#include <iostream>
 
 EpollSelectorUnitTest::EpollSelectorUnitTest()
     : serv_sock(socket(AF_INET, SOCK_STREAM, 0))
@@ -36,15 +37,13 @@ void EpollSelectorUnitTest::TestBody()
 {
 }
 
-TEST(EpollSelectorUnitTest, TEST_ADD_EVENT)
+TEST_F(EpollSelectorUnitTest, TEST_ADD_EVENT)
 {
-    EpollSelectorUnitTest epollSelectorUnitTest;
-    epollSelectorUnitTest.epollSelector.addEvent(epollSelectorUnitTest.serv_sock,
-                                                 selector::EVENT_READ, [](int a) { return; });
-    epollSelectorUnitTest.epollSelector.removeEvent(epollSelectorUnitTest.serv_sock);
+    epollSelector.addEvent(serv_sock, selector::EVENT_READ, [](int a) { return; });
+    epollSelector.removeEvent(serv_sock);
     try
     {
-        epollSelectorUnitTest.epollSelector.removeEvent(epollSelectorUnitTest.serv_sock);
+        epollSelector.removeEvent(serv_sock);
     }
     catch (selector::EpollException &err)
     {
@@ -52,15 +51,12 @@ TEST(EpollSelectorUnitTest, TEST_ADD_EVENT)
     }
 }
 
-TEST(EpollSelectorUnitTest, TEST_ADD_FILE_EVENT_TWICE)
+TEST_F(EpollSelectorUnitTest, TEST_ADD_SAME_FD_EVENT_TWICE)
 {
-    EpollSelectorUnitTest epollSelectorUnitTest;
-    epollSelectorUnitTest.epollSelector.addEvent(epollSelectorUnitTest.serv_sock,
-                                                 selector::EVENT_READ, [](int a) { return; });
+    epollSelector.addEvent(serv_sock, selector::EVENT_READ, [](int a) { return; });
     try
     {
-        epollSelectorUnitTest.epollSelector.addEvent(epollSelectorUnitTest.serv_sock,
-                                                     selector::EVENT_READ, [](int a) { return; });
+        epollSelector.addEvent(serv_sock, selector::EVENT_READ, [](int a) { return; });
     }
     catch (selector::EpollException &err)
     {
@@ -68,23 +64,19 @@ TEST(EpollSelectorUnitTest, TEST_ADD_FILE_EVENT_TWICE)
     }
 }
 
-TEST(EpollSelectorUnitTest, TEST_REMOVE_EVENT)
+TEST_F(EpollSelectorUnitTest, TEST_REMOVE_EVENT)
 {
-    EpollSelectorUnitTest epollSelectorUnitTest;
-    epollSelectorUnitTest.epollSelector.addEvent(epollSelectorUnitTest.serv_sock,
-                                                 selector::EVENT_READ, [](int a) { return; });
-    epollSelectorUnitTest.epollSelector.removeEvent(epollSelectorUnitTest.serv_sock);
+    epollSelector.addEvent(serv_sock,selector::EVENT_READ, [](int a) { return; });
+    epollSelector.removeEvent(serv_sock);
 }
 
-TEST(EpollSelectorUnitTest, TEST_REMOVE_EVENT_TWICE)
+TEST_F(EpollSelectorUnitTest, TEST_REMOVE_SAME_FD_EVENT_TWICE)
 {
-    EpollSelectorUnitTest epollSelectorUnitTest;
-    epollSelectorUnitTest.epollSelector.addEvent(epollSelectorUnitTest.serv_sock,
-                                                 selector::EVENT_READ, [](int a) { return; });
-    epollSelectorUnitTest.epollSelector.removeEvent(epollSelectorUnitTest.serv_sock);
+    epollSelector.addEvent(serv_sock, selector::EVENT_READ, [](int a) { return; });
+    epollSelector.removeEvent(serv_sock);
     try
     {
-        epollSelectorUnitTest.epollSelector.removeEvent(epollSelectorUnitTest.serv_sock);
+        epollSelector.removeEvent(serv_sock);
     }
     catch (selector::EpollException &err)
     {

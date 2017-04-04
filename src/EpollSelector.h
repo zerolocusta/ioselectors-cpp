@@ -43,6 +43,8 @@ public:
 
 private:
   int eventMaskToEpollMask(int event_mask);
+  int epollMaskToEventMask(int epoll_mask);
+  void extendEventListSize();
   void updateEvent(int fd, int operation, int event_mask);
 
 private:
