@@ -35,7 +35,7 @@ public:
   EpollSelector();
   ~EpollSelector();
 
-  void addEvent(int fd, int mask, const callback_func_t &callback) override;
+  void addEvent(int fd, int event_mask, const callback_func_t &callback) override;
   void removeEvent(int fd) override;
   void modifyEvent(int fd, int event_mask) override;
   void modifyEvent(int fd, int event_mask, const callback_func_t &callback) override;

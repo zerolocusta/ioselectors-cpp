@@ -32,7 +32,7 @@ public:
   virtual ~BaseSelector() = default;
 
 public:
-  virtual void addEvent(int fd, int mask, const callback_func_t &callback) = 0;
+  virtual void addEvent(int fd, int event_mask, const callback_func_t &callback) = 0;
   virtual void removeEvent(int fd) = 0;
   virtual void modifyEvent(int fd, int event_mask) = 0;
   virtual void modifyEvent(int fd, int event_mask, const callback_func_t &callback) = 0;
