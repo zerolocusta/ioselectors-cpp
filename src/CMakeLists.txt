@@ -6,17 +6,16 @@ set (CMAKE_CXX_STANDARD 11)
 
 
 
-set(HEADER_FILES 
-    BaseSelector.h
-    DefaultSelector.h
-    EpollSelector.h
+set(HEADER_DIRECTORIES
+    .
     )
 
 set(SOURCE_FILES
     DefaultSelector.cc
     EpollSelector.cc
     )
-
-
-add_library(selector STATIC ${HEADER_FILES} ${SOURCE_FILES})
+FIND_PACKAGE( Boost 1.55 COMPONENTS program_options REQUIRED )
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${HEADER_DIRECTORIES})
+add_library(selector STATIC ${Boost_LIBRARIES} ${SOURCE_FILES})
 add_subdirectory(test)

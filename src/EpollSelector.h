@@ -11,7 +11,7 @@
 #include <vector>
 #include <functional>
 #include <exception>
-#include "boost/core/noncopyable.hpp"
+#include "boost/noncopyable.hpp"
 
 namespace selector
 {
