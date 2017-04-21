@@ -2,7 +2,7 @@
 #define SELECTOR_SRC_TEST_EPOLLSELECTORUNITTEST_H
 
 #include "gtest/gtest.h"
-#include "../EpollSelector.h"
+#include "../src/EpollSelector.h"
 
 using namespace selector;
 

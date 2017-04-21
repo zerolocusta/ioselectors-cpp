@@ -10,11 +10,11 @@ include_directories(${GTEST_INCLUDE_DIRS})
 set(HEADER_INCLUDE_DIRS
     ./
     ./utils/
-    ../
+    ../src
     )
 
 set(EpollSelectorUnitTest_SOURCE_FILES
-    ../EpollSelector.cc
+    ../src/EpollSelector.cc
     EpollSelectorUnitTest.cc
     ./utils/Utils.cc
     )
