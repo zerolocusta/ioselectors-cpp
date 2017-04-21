@@ -16,8 +16,10 @@ set(HEADER_INCLUDE_DIRS
 set(EpollSelectorUnitTest_SOURCE_FILES
     ../EpollSelector.cc
     EpollSelectorUnitTest.cc
+    ./utils/Utils.cc
     )
 
+add_subdirectory(utils/test)
 include_directories(${HEADER_INCLUDE_DIRS})
-add_executable(EpollSelectorUnitTest ${EpollSelectorUnitTest_SOURCE_FILES})
-target_link_libraries(EpollSelectorUnitTest ${GTEST_LIBRARIES} pthread)
+add_executable(TestEpollSelector ${EpollSelectorUnitTest_SOURCE_FILES})
+target_link_libraries(TestEpollSelector ${GTEST_LIBRARIES} pthread)
