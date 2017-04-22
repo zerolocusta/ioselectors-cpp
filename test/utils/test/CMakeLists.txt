@@ -20,5 +20,5 @@ include_directories(${GTEST_INCLUDE_DIRS})
 INCLUDE_DIRECTORIES(${HEADER_DIRECTORIES})
 
 
-add_executable(TestUtilsUnit ${PackedMessageUnitTest_SOURCE_FILES})
-target_link_libraries(TestUtilsUnit ${GTEST_LIBRARIES} pthread)
+add_executable(TestUtils ${PackedMessageUnitTest_SOURCE_FILES})
+target_link_libraries(TestUtils ${GTEST_LIBRARIES} pthread)

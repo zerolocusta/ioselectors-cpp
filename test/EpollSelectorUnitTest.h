@@ -16,7 +16,7 @@ class EpollSelectorUnitTest : public testing::Test
     void TearDown();
     void TestBody();
     EpollSelector epollSelector;
-    int serv_sock;
+    int serv_sock, cli_sock;
 };
 
 #endif // SELECTOR_SRC_TEST_EPOLLSELECTORUNITTEST_H

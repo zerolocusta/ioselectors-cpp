@@ -1,4 +1,5 @@
 #include "EpollSelectorUnitTest.h"
+#include "./utils/utils.h"
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -8,7 +9,8 @@
 #include <iostream>
 
 EpollSelectorUnitTest::EpollSelectorUnitTest()
-    : serv_sock(socket(AF_INET, SOCK_STREAM, 0))
+    : serv_sock(socket(AF_INET, SOCK_STREAM, 0)),
+      cli_sock(socket(AF_INET, SOCK_STREAM, 0))
 {
 }
 
@@ -18,15 +20,18 @@ EpollSelectorUnitTest::~EpollSelectorUnitTest()
 
 void EpollSelectorUnitTest::SetUp()
 {
+
+    // set up server socket
     int enable = 1;
     setsockopt(serv_sock, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(enable));
     struct sockaddr_in serv_addr;
     bzero(&serv_addr, sizeof(serv_addr));
     serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htobe16(8080);
+    serv_addr.sin_port = htobe16(utils::SERVER_PORT);
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     bind(serv_sock, (const struct sockaddr *)&serv_addr, sizeof(serv_addr));
     listen(serv_sock, 1024);
+
 }
 
 void EpollSelectorUnitTest::TearDown()
