@@ -1,12 +1,14 @@
 #include "Utils.h"
 #include <endian.h>
 #include <stdexcept>
+#include <exception>
 #include <cstring>
 #include <vector>
 #include <iostream>
 #include <utility>
 #include <unistd.h>
 #include <fcntl.h>
+#include <functional>
 namespace utils
 {
 
@@ -49,11 +51,30 @@ TestClient::~TestClient()
 {
     close(cli_sock);
 }
-void TestClient::onSendMessage(const std::string &msg)
+void TestClient::sendMessage(const std::string &msg)
 {
     auto encoded_message = encodeMessage(msg);
-    auto nwrite = write(cli_sock, encoded_message.data(), encoded_message.size());
-    
+    selector_.addEvent(cli_sock, selector::EVENT_WRITE, [this, encoded_message](int mask) { this->onSendMessage(mask, encoded_message); });
+}
+
+void TestClient::onSendMessage(int mask, const std::vector<char> &msg)
+{
+    auto nwrite = write(cli_sock, msg.data(), msg.size());
+    // if write(2) return EWOULDBLOCK, then ignore it
+    if (nwrite < 0)
+    {
+        if (errno == EWOULDBLOCK)
+            return;
+        std::terminate();
+    }
+
+    current_send += nwrite;
+    if (current_send == msg.size())
+    {
+        selector_.removeEvent(cli_sock);
+        current_send = 0;
+    }
+
 }
 std::string TestClient::onRecvMessage()
 {

@@ -22,22 +22,20 @@ enum
 void setNonBlocking(int fd);
 const std::vector<char> encodeMessage(const std::string &message);
 
-
-
 class TestClient : private boost::noncopyable
 {
-    public:
-        TestClient(selector::BaseSelector&);
-        ~TestClient();
+  public:
+    TestClient(selector::BaseSelector &);
+    ~TestClient();
+    void sendMessage(const std::string &msg);
 
-        void onSendMessage(const std::string& msg);
-        std::string onRecvMessage();
-
-    private:
-        selector::BaseSelector& selector_;
-        int cli_sock, serv_port;
-        struct sockaddr_in cli_addr;
-        uint64_t current_send, current_recv;
+  private:
+    void onSendMessage(int mask, const std::vector<char> &msg);
+    std::string onRecvMessage();
+    selector::BaseSelector &selector_;
+    int cli_sock, serv_port;
+    struct sockaddr_in cli_addr;
+    uint64_t current_send, current_recv;
 };
 }
 
